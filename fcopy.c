@@ -3,23 +3,31 @@
 
 int main(int argc, const char* argv[])
 {
-	FILE *fp1, *fp2;
-	char ch;
+	FILE *source, *dest;
+	int ch;						//此处用int而不是char
+
 	if (argc != 3){
-		printf("Usage: fcopy file1 file2 \n");
+		fprintf(stderr, "usage: fcopy source dest\n");		//用fprintf
 		exit(EXIT_FAILURE);
 	}
-	fp1 = fopen(argv[1], "r");
-	fp2 = fopen(argv[2], "w");
-	if (fp1 == NULL || fp2 == NULL){
-		printf("Can't open file.\n");
+	source = fopen(argv[1], "rb");
+	dest = fopen(argv[2], "wb");
+
+	if (source == NULL){
+		fprintf(stderr, "Can't open %s.\n", argv[1]);
+		exit(EXIT_FAILURE);
+	}
+	if (dest == NULL){
+		fprintf(stderr, "Can't open %s.\n", argv[2]);
+		fclose(source);			//source已经打开了，所以要关闭
 		exit(EXIT_FAILURE);
 	}
 
-	while ((ch = fgetc(fp1)) != EOF){
-		fputc(ch, fp2);
-	}
+	while ((ch = fgetc(source)) != EOF)
+		fputc(ch, dest);
 
+	fclose(source);
+	fclose(dest);				//记得关闭这两个文件
 	return 0;	
 }
 
